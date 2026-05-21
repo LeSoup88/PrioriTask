@@ -144,19 +144,42 @@ class AccountScreen extends StatelessWidget {
               const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
-                child: OutlinedButton.icon(
+                child: ElevatedButton.icon(
                   onPressed: () {},
-                  icon: const Icon(Icons.logout_rounded,
-                      color: AppColors.urgent),
+                  icon: const Icon(Icons.logout_rounded),
                   label: const Text(
                     'Keluar',
-                    style: TextStyle(color: AppColors.urgent),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
                   ),
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppColors.urgent),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.urgent.withOpacity(0.1),
+                    foregroundColor: AppColors.urgent,
                     padding: const EdgeInsets.symmetric(vertical: 14),
+                    elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
+                    ),
+                  ).copyWith(
+                    backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                      (states) {
+                        if (states.contains(WidgetState.pressed) ||
+                            states.contains(WidgetState.hovered)) {
+                          return AppColors.urgent; // merah solid saat ditekan/hover
+                        }
+                        return AppColors.urgent.withOpacity(0.1); // merah muda default
+                      },
+                    ),
+                    foregroundColor: WidgetStateProperty.resolveWith<Color>(
+                      (states) {
+                        if (states.contains(WidgetState.pressed) ||
+                            states.contains(WidgetState.hovered)) {
+                          return Colors.white; // teks putih saat ditekan/hover
+                        }
+                        return AppColors.urgent; // teks merah saat default
+                      },
                     ),
                   ),
                 ),
