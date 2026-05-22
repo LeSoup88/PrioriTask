@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'theme/app_theme.dart';
 import 'services/task_provider.dart';
+import 'services/theme_provider.dart';
 import 'screens/main_shell.dart';
 
 void main() async {
@@ -31,13 +32,20 @@ class PrioriTaskApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => TaskProvider()..loadTasks()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
-      child: MaterialApp(
-        title: 'PrioriTask',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.theme,
-        home: const MainShell(),
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, _) {
+          return MaterialApp(
+            title: 'PrioriTask',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeProvider.themeMode,
+            home: const MainShell(),
+          );
+        }, 
       ),
-    );
+    ); 
   }
 }

@@ -6,6 +6,10 @@ class AccountScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textHint = isDark ? AppColors.darkTextSecondary : AppColors.textHint;
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -14,16 +18,15 @@ class AccountScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 4),
-              const Text(
+              Text(
                 'Profil',
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
+                  color: textPrimary,
                 ),
               ),
               const SizedBox(height: 24),
-              // Profile card
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
@@ -47,16 +50,17 @@ class AccountScreen extends StatelessWidget {
                       ),
                       child: ClipOval(
                         child: Image.asset(
-                        'assets/images/profile_picture.png',
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => const Icon(
-                          Icons.person_rounded,
-                          size: 44,
-                          color: Colors.white,
+                          'assets/images/profile_picture.png',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(
+                            Icons.person_rounded,
+                            size: 44,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
-                  ),
                     const SizedBox(height: 14),
                     const Text(
                       'Lil Gui',
@@ -69,10 +73,7 @@ class AccountScreen extends StatelessWidget {
                     const SizedBox(height: 4),
                     const Text(
                       'lilgui@binus.ac.id',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.white70,
-                      ),
+                      style: TextStyle(fontSize: 13, color: Colors.white70),
                     ),
                     const SizedBox(height: 16),
                     Container(
@@ -95,52 +96,35 @@ class AccountScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              // Stats
               Row(
                 children: [
-                  Expanded(
-                    child: _buildStatCard(
-                        'NIM', '2210511001', Icons.badge_outlined),
-                  ),
+                  Expanded(child: _buildStatCard(context, 'NIM', '2210511001', Icons.badge_outlined)),
                   const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildStatCard(
-                        'Semester', '6', Icons.school_outlined),
-                  ),
+                  Expanded(child: _buildStatCard(context, 'Semester', '6', Icons.school_outlined)),
                 ],
               ),
               const SizedBox(height: 12),
               Row(
                 children: [
-                  Expanded(
-                    child: _buildStatCard(
-                        'IPK', '3.75', Icons.star_outline_rounded),
-                  ),
+                  Expanded(child: _buildStatCard(context, 'IPK', '3.75', Icons.star_outline_rounded)),
                   const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildStatCard(
-                        'SKS', '128', Icons.book_outlined),
-                  ),
+                  Expanded(child: _buildStatCard(context, 'SKS', '128', Icons.book_outlined)),
                 ],
               ),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 'Pengaturan',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
+                  color: textPrimary,
                 ),
               ),
               const SizedBox(height: 12),
-              _buildSettingsItem(
-                  Icons.notifications_outlined, 'Notifikasi', () {}),
-              _buildSettingsItem(
-                  Icons.lock_outline_rounded, 'Keamanan Akun', () {}),
-              _buildSettingsItem(
-                  Icons.help_outline_rounded, 'Bantuan & Dukungan', () {}),
-              _buildSettingsItem(
-                  Icons.info_outline_rounded, 'Tentang Aplikasi', () {}),
+              _buildSettingsItem(context, Icons.notifications_outlined, 'Notifikasi', () {}),
+              _buildSettingsItem(context, Icons.lock_outline_rounded, 'Keamanan Akun', () {}),
+              _buildSettingsItem(context, Icons.help_outline_rounded, 'Bantuan & Dukungan', () {}),
+              _buildSettingsItem(context, Icons.info_outline_rounded, 'Tentang Aplikasi', () {}),
               const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
@@ -149,10 +133,7 @@ class AccountScreen extends StatelessWidget {
                   icon: const Icon(Icons.logout_rounded),
                   label: const Text(
                     'Keluar',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.urgent.withOpacity(0.1),
@@ -167,28 +148,28 @@ class AccountScreen extends StatelessWidget {
                       (states) {
                         if (states.contains(WidgetState.pressed) ||
                             states.contains(WidgetState.hovered)) {
-                          return AppColors.urgent; // merah solid saat ditekan/hover
+                          return AppColors.urgent;
                         }
-                        return AppColors.urgent.withOpacity(0.1); // merah muda default
+                        return AppColors.urgent.withOpacity(0.1);
                       },
                     ),
                     foregroundColor: WidgetStateProperty.resolveWith<Color>(
                       (states) {
                         if (states.contains(WidgetState.pressed) ||
                             states.contains(WidgetState.hovered)) {
-                          return Colors.white; // teks putih saat ditekan/hover
+                          return Colors.white;
                         }
-                        return AppColors.urgent; // teks merah saat default
+                        return AppColors.urgent;
                       },
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 24),
-              const Center(
+              Center(
                 child: Text(
-                  'PrioriTask v1.0.0 - MVP',
-                  style: TextStyle(fontSize: 11, color: AppColors.textHint),
+                  'PrioriTask v2.0.0 - MVP',
+                  style: TextStyle(fontSize: 11, color: textHint),
                 ),
               ),
             ],
@@ -198,13 +179,19 @@ class AccountScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon) {
+  Widget _buildStatCard(BuildContext context, String label, String value, IconData icon) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final dividerColor = isDark ? AppColors.darkDivider : AppColors.divider;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: dividerColor),
       ),
       child: Column(
         children: [
@@ -212,47 +199,50 @@ class AccountScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
+              color: textPrimary,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             label,
-            style:
-                const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+            style: TextStyle(fontSize: 11, color: textSecondary),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSettingsItem(IconData icon, String title, VoidCallback onTap) {
+  Widget _buildSettingsItem(BuildContext context, IconData icon, String title, VoidCallback onTap) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final dividerColor = isDark ? AppColors.darkDivider : AppColors.divider;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textHint = isDark ? AppColors.darkTextSecondary : AppColors.textHint;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: cardColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: dividerColor),
       ),
       child: ListTile(
         leading: Icon(icon, color: AppColors.primary, size: 22),
         title: Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: AppColors.textPrimary,
+            color: textPrimary,
           ),
         ),
-        trailing: const Icon(Icons.chevron_right_rounded,
-            color: AppColors.textHint, size: 20),
+        trailing: Icon(Icons.chevron_right_rounded, color: textHint, size: 20),
         onTap: onTap,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       ),
     );
   }
