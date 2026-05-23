@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
+import '../services/theme_provider.dart';
+import 'notification_settings_screen.dart';
+import 'security_screen.dart';
+import 'help_screen.dart';
+import 'about_screen.dart';
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
@@ -27,6 +33,7 @@ class AccountScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
+              // Profile card
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
@@ -53,11 +60,8 @@ class AccountScreen extends StatelessWidget {
                           'assets/images/profile_picture.png',
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
-                              const Icon(
-                            Icons.person_rounded,
-                            size: 44,
-                            color: Colors.white,
-                          ),
+                              const Icon(Icons.person_rounded,
+                                  size: 44, color: Colors.white),
                         ),
                       ),
                     ),
@@ -96,6 +100,7 @@ class AccountScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
+              // Stats
               Row(
                 children: [
                   Expanded(child: _buildStatCard(context, 'NIM', '2210511001', Icons.badge_outlined)),
@@ -121,11 +126,43 @@ class AccountScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              _buildSettingsItem(context, Icons.notifications_outlined, 'Notifikasi', () {}),
-              _buildSettingsItem(context, Icons.lock_outline_rounded, 'Keamanan Akun', () {}),
-              _buildSettingsItem(context, Icons.help_outline_rounded, 'Bantuan & Dukungan', () {}),
-              _buildSettingsItem(context, Icons.info_outline_rounded, 'Tentang Aplikasi', () {}),
+              // Tampilan toggle
+              _buildThemeToggle(context),
+              // Settings items
+              _buildSettingsItem(
+                context,
+                Icons.notifications_outlined,
+                'Notifikasi',
+                'Kelola pengingat deadline',
+                () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const NotificationSettingsScreen())),
+              ),
+              _buildSettingsItem(
+                context,
+                Icons.lock_outline_rounded,
+                'Keamanan Akun',
+                'Password & autentikasi',
+                () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const SecurityScreen())),
+              ),
+              _buildSettingsItem(
+                context,
+                Icons.help_outline_rounded,
+                'Bantuan & Dukungan',
+                'FAQ & hubungi developer',
+                () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const HelpScreen())),
+              ),
+              _buildSettingsItem(
+                context,
+                Icons.info_outline_rounded,
+                'Tentang Aplikasi',
+                'Versi & informasi app',
+                () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const AboutScreen())),
+              ),
               const SizedBox(height: 12),
+              // Logout button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -179,10 +216,67 @@ class AccountScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildThemeToggle(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final dividerColor = isDark ? const Color(0xFF263550) : AppColors.divider;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: dividerColor),
+      ),
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, _) {
+          return ListTile(
+            leading: Icon(
+              themeProvider.isDarkMode
+                  ? Icons.dark_mode_rounded
+                  : Icons.light_mode_rounded,
+              color: AppColors.primary,
+              size: 22,
+            ),
+            title: Text(
+              'Tampilan',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: textPrimary,
+              ),
+            ),
+            subtitle: Text(
+              themeProvider.isDarkMode ? 'Mode Gelap' : 'Mode Terang',
+              style: TextStyle(
+                fontSize: 12,
+                color: textSecondary,
+              ),
+            ),
+            trailing: Switch(
+              value: themeProvider.isDarkMode,
+              onChanged: (_) => themeProvider.toggleTheme(),
+              activeColor: AppColors.gold,
+              activeTrackColor: AppColors.gold.withOpacity(0.3),
+              inactiveThumbColor: AppColors.primary,
+              inactiveTrackColor: AppColors.primary.withOpacity(0.2),
+            ),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14)),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildStatCard(BuildContext context, String label, String value, IconData icon) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
-    final dividerColor = isDark ? AppColors.darkDivider : AppColors.divider;
+    final dividerColor = isDark ? const Color(0xFF263550) : AppColors.divider;
     final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
     final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
 
@@ -197,29 +291,26 @@ class AccountScreen extends StatelessWidget {
         children: [
           Icon(icon, color: AppColors.primary, size: 22),
           const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: textPrimary,
-            ),
-          ),
+          Text(value,
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: textPrimary)),
           const SizedBox(height: 2),
-          Text(
-            label,
-            style: TextStyle(fontSize: 11, color: textSecondary),
-          ),
+          Text(label,
+              style: TextStyle(fontSize: 11, color: textSecondary)),
         ],
       ),
     );
   }
 
-  Widget _buildSettingsItem(BuildContext context, IconData icon, String title, VoidCallback onTap) {
+  Widget _buildSettingsItem(BuildContext context, IconData icon, String title,
+      String subtitle, VoidCallback onTap) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
-    final dividerColor = isDark ? AppColors.darkDivider : AppColors.divider;
+    final dividerColor = isDark ? const Color(0xFF263550) : AppColors.divider;
     final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
     final textHint = isDark ? AppColors.darkTextSecondary : AppColors.textHint;
 
     return Container(
@@ -231,18 +322,19 @@ class AccountScreen extends StatelessWidget {
       ),
       child: ListTile(
         leading: Icon(icon, color: AppColors.primary, size: 22),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: textPrimary,
-          ),
-        ),
+        title: Text(title,
+            style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: textPrimary)),
+        subtitle: Text(subtitle,
+            style: TextStyle(fontSize: 12, color: textSecondary)),
         trailing: Icon(Icons.chevron_right_rounded, color: textHint, size: 20),
         onTap: onTap,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       ),
     );
   }

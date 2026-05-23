@@ -7,7 +7,6 @@ import '../models/task.dart';
 import '../widgets/priority_task_card.dart';
 import '../widgets/notification_card.dart';
 import 'task_detail_screen.dart';
-import '../services/theme_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -117,70 +116,20 @@ class HomeScreen extends StatelessWidget {
               ),
             ],
           ),
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                decoration: BoxDecoration(
-                  color: AppColors.gold.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  dateStr,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.gold,
-                  ),
-                ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppColors.gold.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              dateStr,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.gold,
               ),
-              const SizedBox(width: 8),
-              Consumer<ThemeProvider>(
-                builder: (context, themeProvider, _) {
-                  final isDark = themeProvider.isDarkMode;
-                  return GestureDetector(
-                    onTap: () => themeProvider.toggleTheme(),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
-                      width: 44,
-                      height: 24,
-                      padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? AppColors.gold.withOpacity(0.25)
-                            : Colors.white.withOpacity(0.25),
-                        borderRadius: BorderRadius.circular(99),
-                        border: Border.all(
-                          color: isDark
-                              ? AppColors.gold.withOpacity(0.5)
-                              : AppColors.primary.withOpacity(0.3),
-                          width: 1,
-                        ),
-                      ),
-                      child: AnimatedAlign(
-                        duration: const Duration(milliseconds: 250),
-                        alignment: isDark
-                            ? Alignment.centerRight
-                            : Alignment.centerLeft,
-                        child: Container(
-                          width: 18,
-                          height: 18,
-                          decoration: BoxDecoration(
-                            color: isDark ? AppColors.gold : AppColors.primary,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-                            size: 11,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
+            ),
           ),
         ],
       ),
