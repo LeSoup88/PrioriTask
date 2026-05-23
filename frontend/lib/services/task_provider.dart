@@ -106,6 +106,7 @@ class TaskProvider extends ChangeNotifier {
       _apiService.addProgressUpdate(taskId, {
         'progress_percent': progress,
         'note': note,
+      // ignore: body_might_complete_normally_catch_error
       }).catchError((e) {
         debugPrint('Failed to sync progress to backend: $e');
       });
@@ -128,10 +129,10 @@ class TaskProvider extends ChangeNotifier {
 
     notifyListeners();
 
-    // Sync ke backend di background
     _apiService.addProgressUpdate(taskId, {
       'progress_percent': progress,
       'note': note,
+    // ignore: body_might_complete_normally_catch_error
     }).catchError((e) {
       debugPrint('Failed to sync progress: $e');
     });

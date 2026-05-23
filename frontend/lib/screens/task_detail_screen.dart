@@ -343,7 +343,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
 
   Widget _buildHistoryTab(Task task) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
     final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
     final textHint = isDark ? AppColors.darkTextSecondary : AppColors.textHint;
     final updates = task.progressUpdates;
