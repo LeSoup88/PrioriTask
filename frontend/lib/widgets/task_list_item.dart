@@ -23,7 +23,7 @@ class TaskListItem extends StatelessWidget {
     final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
     final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
     final textHint = isDark ? AppColors.darkTextSecondary : AppColors.textHint;
-    final dividerColor = isDark ? AppColors.darkDivider : AppColors.divider;
+    final dividerColor = isDark ? const Color(0xFF263550) : AppColors.divider;
     final diffColor = _difficultyColor(task.difficulty);
 
     return Dismissible(
@@ -165,7 +165,7 @@ class TaskListItem extends StatelessWidget {
                         padding: EdgeInsets.zero,
                         lineHeight: 5,
                         percent: task.progressPercent / 100,
-                        backgroundColor: dividerColor,
+                        backgroundColor: isDark ? const Color(0xFF2A3F60) : AppColors.divider,
                         progressColor: task.isOverdue
                             ? AppColors.urgent
                             : AppColors.primary,

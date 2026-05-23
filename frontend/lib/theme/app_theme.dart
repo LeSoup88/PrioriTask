@@ -36,7 +36,7 @@ class AppColors {
   static const Color darkCard = Color(0xFF1A2A4A);
   static const Color darkNavBar = Color(0xFF0A1220);
   static const Color darkTextPrimary = Color(0xFFCBD5E8);
-  static const Color darkTextSecondary = Color(0xFF6A80A0);
+  static const Color darkTextSecondary = Color(0xFF7A95B8);
   static const Color darkDivider = Color(0xFF1E2F4A);
 }
 
@@ -177,10 +177,39 @@ class AppTheme {
         ),
       ),
     ),
+
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: AppColors.darkSurface,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AppColors.darkDivider),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AppColors.darkDivider),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+      ),
+      hintStyle: const TextStyle(
+        color: AppColors.darkTextSecondary,
+        fontFamily: 'Poppins',
+        fontSize: 14,
+      ),
+      labelStyle: const TextStyle(
+        color: AppColors.darkTextSecondary,
+        fontFamily: 'Poppins',
+        fontSize: 14,
+      ),
+    ),
+
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: AppColors.darkNavBar,
       selectedItemColor: AppColors.gold,
-      unselectedItemColor: Color(0xFF2A3A54),
+      unselectedItemColor: Color(0xFF4A6080),
       showUnselectedLabels: true,
       type: BottomNavigationBarType.fixed,
       elevation: 0,

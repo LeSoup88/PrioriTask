@@ -110,7 +110,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           color: textPrimary,
                           fontWeight: FontWeight.w500),
                       todayDecoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.15),
+                        color: AppColors.primary.withOpacity(isDark ? 0.35 : 0.15),
                         shape: BoxShape.circle,
                       ),
                       todayTextStyle: const TextStyle(
