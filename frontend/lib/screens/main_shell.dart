@@ -25,6 +25,10 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final navBgColor = isDark ? AppColors.darkNavBar : AppColors.navBarBg;
+    final dividerColor = isDark ? AppColors.darkDivider : AppColors.divider;
+
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
@@ -40,10 +44,10 @@ class _MainShellState extends State<MainShell> {
             )
           : null,
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: AppColors.navBarBg,
+        decoration: BoxDecoration(
+          color: navBgColor,
           border: Border(
-            top: BorderSide(color: AppColors.divider, width: 1),
+            top: BorderSide(color: dividerColor, width: 1),
           ),
         ),
         child: SafeArea(

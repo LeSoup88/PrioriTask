@@ -11,6 +11,12 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final textHint = isDark ? AppColors.darkTextSecondary : AppColors.textHint;
+
     final days = task.daysUntilDeadline;
     final urgency = _getUrgencyLevel(days);
 
@@ -19,15 +25,20 @@ class NotificationCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: cardColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: urgency.color.withOpacity(0.3)),
+          border: Border.all(
+            color: isDark
+                ? urgency.color.withOpacity(0.2)
+                : urgency.color.withOpacity(0.3),
+          ),
           boxShadow: [
-            BoxShadow(
-              color: AppColors.shadow.withOpacity(0.5),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
+            if (!isDark)
+              BoxShadow(
+                color: AppColors.shadow.withOpacity(0.5),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
           ],
         ),
         child: Row(
@@ -48,10 +59,10 @@ class NotificationCard extends StatelessWidget {
                 children: [
                   Text(
                     task.taskName,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: textPrimary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -59,26 +70,19 @@ class NotificationCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     task.subjectName,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textSecondary,
-                    ),
+                    style: TextStyle(fontSize: 12, color: textSecondary),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     DateFormat('d MMM yyyy, HH:mm').format(task.deadline),
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: AppColors.textHint,
-                    ),
+                    style: TextStyle(fontSize: 11, color: textHint),
                   ),
                 ],
               ),
             ),
             const SizedBox(width: 8),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 color: urgency.color.withOpacity(0.12),
                 borderRadius: BorderRadius.circular(10),
@@ -103,17 +107,11 @@ class NotificationCard extends StatelessWidget {
   }
 
   _UrgencyLevel _getUrgencyLevel(int days) {
-    if (days < 0) {
-      return _UrgencyLevel(AppColors.urgent, Icons.error_outline_rounded);
-    } else if (days == 0) {
-      return _UrgencyLevel(AppColors.urgent, Icons.warning_amber_rounded);
-    } else if (days <= 1) {
-      return _UrgencyLevel(AppColors.urgent, Icons.alarm_rounded);
-    } else if (days <= 3) {
-      return _UrgencyLevel(AppColors.warning, Icons.schedule_rounded);
-    } else {
-      return _UrgencyLevel(AppColors.primary, Icons.notifications_outlined);
-    }
+    if (days < 0) return _UrgencyLevel(AppColors.urgent, Icons.error_outline_rounded);
+    if (days == 0) return _UrgencyLevel(AppColors.urgent, Icons.warning_amber_rounded);
+    if (days <= 1) return _UrgencyLevel(AppColors.urgent, Icons.alarm_rounded);
+    if (days <= 3) return _UrgencyLevel(AppColors.warning, Icons.schedule_rounded);
+    return _UrgencyLevel(AppColors.gold, Icons.notifications_outlined);
   }
 }
 

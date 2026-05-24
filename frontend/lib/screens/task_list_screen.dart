@@ -11,6 +11,9 @@ class TaskListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+
     return Scaffold(
       body: SafeArea(
         child: Consumer<TaskProvider>(
@@ -29,12 +32,12 @@ class TaskListScreen extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             'Daftar Tugas',
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
+                              color: textPrimary,
                             ),
                           ),
                           Container(
@@ -57,7 +60,6 @@ class TaskListScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Active tasks section
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
@@ -69,8 +71,7 @@ class TaskListScreen extends StatelessWidget {
                       child: Center(
                         child: Padding(
                           padding: EdgeInsets.all(32),
-                          child: CircularProgressIndicator(
-                              color: AppColors.primary),
+                          child: CircularProgressIndicator(color: AppColors.primary),
                         ),
                       ),
                     )
@@ -79,6 +80,7 @@ class TaskListScreen extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
                         child: _emptyState(
+                          context: context,
                           icon: Icons.task_alt,
                           message: 'Tidak ada tugas aktif',
                           sub: 'Tekan tombol + untuk menambahkan tugas baru',
@@ -102,13 +104,11 @@ class TaskListScreen extends StatelessWidget {
                         childCount: active.length,
                       ),
                     ),
-                  // Completed tasks section
                   if (completed.isNotEmpty) ...[
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-                        child:
-                            _sectionLabel('Tugas Selesai', AppColors.success),
+                        child: _sectionLabel('Tugas Selesai', AppColors.success),
                       ),
                     ),
                     SliverList(
@@ -162,33 +162,41 @@ class TaskListScreen extends StatelessWidget {
     );
   }
 
-  Widget _emptyState(
-      {required IconData icon,
-      required String message,
-      required String sub}) {
+  Widget _emptyState({
+    required BuildContext context,
+    required IconData icon,
+    required String message,
+    required String sub,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final dividerColor = isDark ? AppColors.darkDivider : AppColors.divider;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final textHint = isDark ? AppColors.darkTextSecondary : AppColors.textHint;
+
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: dividerColor),
       ),
       child: Column(
         children: [
-          Icon(icon, size: 44, color: AppColors.textHint),
+          Icon(icon, size: 44, color: textHint),
           const SizedBox(height: 10),
           Text(
             message,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: AppColors.textSecondary,
+              color: textSecondary,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             sub,
-            style: const TextStyle(fontSize: 12, color: AppColors.textHint),
+            style: TextStyle(fontSize: 12, color: textHint),
             textAlign: TextAlign.center,
           ),
         ],

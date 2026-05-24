@@ -36,9 +36,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Consumer<TaskProvider>(
       builder: (context, provider, _) {
-        // Selalu ambil task terbaru dari provider agar data selalu sinkron
         final task = provider.tasks.firstWhere(
           (t) => t.id == widget.task.id,
           orElse: () => widget.task,
@@ -46,7 +47,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
         final diffColor = _difficultyColor(task.difficulty);
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
           body: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               SliverAppBar(
@@ -55,8 +56,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
                 forceElevated: innerBoxIsScrolled,
                 backgroundColor: AppColors.primary,
                 leading: IconButton(
-                  icon: const Icon(Icons.arrow_back_rounded,
-                      color: Colors.white),
+                  icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 flexibleSpace: FlexibleSpaceBar(
@@ -139,9 +139,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
     );
   }
 
-  // ─── Tab 1: Detail & Update Progress ──────────────────────────────────────
-
   Widget _buildDetailTab(Task task, Color diffColor) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final dividerColor = isDark ? AppColors.darkDivider : AppColors.divider;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -178,8 +182,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
                   value: task.isOverdue
                       ? 'Terlambat'
                       : '${task.daysUntilDeadline} hari lagi',
-                  color:
-                      task.isOverdue ? AppColors.urgent : AppColors.warning,
+                  color: task.isOverdue ? AppColors.urgent : AppColors.warning,
                 ),
               ),
               const SizedBox(width: 10),
@@ -197,39 +200,40 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
           ),
           if (task.description.isNotEmpty) ...[
             const SizedBox(height: 20),
-            const Text(
+            Text(
               'Deskripsi',
               style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary),
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: textPrimary,
+              ),
             ),
             const SizedBox(height: 8),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: cardColor,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.divider),
+                border: Border.all(color: dividerColor),
               ),
               child: Text(
                 task.description,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
-                  color: AppColors.textSecondary,
+                  color: textSecondary,
                   height: 1.5,
                 ),
               ),
             ),
           ],
           const SizedBox(height: 24),
-          const Text(
+          Text(
             'Update Progress',
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
+              color: textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -241,12 +245,18 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
   }
 
   Widget _buildProgressSection(Task task) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final dividerColor = isDark ? AppColors.darkDivider : AppColors.divider;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: cardColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: dividerColor),
       ),
       child: Column(
         children: [
@@ -256,15 +266,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
             percent: _progress / 100,
             center: Text(
               '${_progress.toInt()}%',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
+                color: textPrimary,
               ),
             ),
-            progressColor:
-                _progress >= 100 ? AppColors.success : AppColors.primary,
-            backgroundColor: AppColors.divider,
+            progressColor: _progress >= 100 ? AppColors.success : AppColors.primary,
+            backgroundColor: dividerColor,
             animation: true,
             circularStrokeCap: CircularStrokeCap.round,
           ),
@@ -272,10 +281,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Geser untuk update',
-                style:
-                    TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                style: TextStyle(fontSize: 12, color: textSecondary),
               ),
               Text(
                 '${_progress.toInt()}%',
@@ -293,17 +301,30 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
             max: 100,
             divisions: 20,
             activeColor: AppColors.gold,
-            inactiveColor: AppColors.divider,
+            inactiveColor: dividerColor,
             onChanged: (val) => setState(() => _progress = val),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _noteController,
             maxLines: 2,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: 'Tulis catatan progress...',
-              prefixIcon:
-                  Icon(Icons.edit_note_rounded, color: AppColors.primary),
+              prefixIcon: const Icon(Icons.edit_note_rounded, color: AppColors.primary),
+              filled: true,
+              fillColor: isDark ? AppColors.darkBackground : AppColors.surface,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: dividerColor),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: dividerColor),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+              ),
             ),
           ),
           const SizedBox(height: 14),
@@ -320,9 +341,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
     );
   }
 
-  // ─── Tab 2: Riwayat Progress ───────────────────────────────────────────────
-
   Widget _buildHistoryTab(Task task) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final textHint = isDark ? AppColors.darkTextSecondary : AppColors.textHint;
     final updates = task.progressUpdates;
 
     if (updates.isEmpty) {
@@ -330,24 +352,21 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.history_rounded,
-              size: 64,
-              color: AppColors.textHint.withOpacity(0.4),
-            ),
+            Icon(Icons.history_rounded,
+                size: 64, color: textHint.withOpacity(0.4)),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Belum ada riwayat progress',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textSecondary,
+                color: textSecondary,
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
+            Text(
               'Update progress pertamamu di tab\nDetail & Progress',
-              style: TextStyle(fontSize: 13, color: AppColors.textHint),
+              style: TextStyle(fontSize: 13, color: textHint),
               textAlign: TextAlign.center,
             ),
           ],
@@ -364,7 +383,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
       itemBuilder: (context, index) {
         final update = sorted[index];
         final isLatest = index == 0;
-
         return _buildHistoryItem(
           update: update,
           isLatest: isLatest,
@@ -379,6 +397,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
     required bool isLatest,
     required bool isLast,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textHint = isDark ? AppColors.darkTextSecondary : AppColors.textHint;
+    final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final dividerColor = isDark ? AppColors.darkDivider : AppColors.divider;
+
     final percent = update.progressPercent;
     final color = percent >= 100
         ? AppColors.success
@@ -392,7 +416,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Timeline column
           SizedBox(
             width: 48,
             child: Column(
@@ -424,84 +447,73 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
                     child: Container(
                       width: 2,
                       margin: const EdgeInsets.symmetric(vertical: 4),
-                      color: AppColors.divider,
+                      color: dividerColor,
                     ),
                   ),
               ],
             ),
           ),
           const SizedBox(width: 12),
-          // Content
           Expanded(
             child: Padding(
               padding: EdgeInsets.only(bottom: isLast ? 0 : 16),
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: isLatest
-                      ? color.withOpacity(0.06)
-                      : AppColors.surface,
+                  color: isLatest ? color.withOpacity(0.06) : cardColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: isLatest
-                        ? color.withOpacity(0.3)
-                        : AppColors.divider,
+                    color: isLatest ? color.withOpacity(0.3) : dividerColor,
                   ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: color.withOpacity(0.12),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                '${percent.toInt()}% selesai',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: color,
-                                ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: color.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '${percent.toInt()}% selesai',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: color,
+                            ),
+                          ),
+                        ),
+                        if (isLatest) ...[
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              'Terbaru',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
                               ),
                             ),
-                            if (isLatest) ...[
-                              const SizedBox(width: 6),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 3),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: const Text(
-                                  'Terbaru',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
+                          ),
+                        ],
                       ],
                     ),
                     const SizedBox(height: 8),
-                    // Progress bar mini
                     ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
                         value: percent / 100,
-                        backgroundColor: AppColors.divider,
+                        backgroundColor: dividerColor,
                         valueColor: AlwaysStoppedAnimation<Color>(color),
                         minHeight: 5,
                       ),
@@ -511,18 +523,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(
-                            Icons.notes_rounded,
-                            size: 14,
-                            color: AppColors.textHint,
-                          ),
+                          Icon(Icons.notes_rounded, size: 14, color: textHint),
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
                               update.note,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
-                                color: AppColors.textPrimary,
+                                color: textPrimary,
                                 height: 1.4,
                               ),
                             ),
@@ -533,19 +541,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.access_time_rounded,
-                          size: 12,
-                          color: AppColors.textHint,
-                        ),
+                        Icon(Icons.access_time_rounded, size: 12, color: textHint),
                         const SizedBox(width: 4),
                         Text(
                           DateFormat('EEEE, d MMMM yyyy  •  HH:mm')
                               .format(update.createdAt),
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: AppColors.textHint,
-                          ),
+                          style: TextStyle(fontSize: 11, color: textHint),
                         ),
                       ],
                     ),
@@ -565,6 +566,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
     required String value,
     required Color color,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -579,10 +583,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
           const SizedBox(height: 6),
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 11,
-              color: AppColors.textSecondary,
-            ),
+            style: TextStyle(fontSize: 11, color: textSecondary),
           ),
           const SizedBox(height: 2),
           Text(
@@ -600,30 +601,22 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
 
   Color _difficultyColor(String d) {
     switch (d) {
-      case 'easy':
-        return AppColors.easy;
-      case 'hard':
-        return AppColors.hard;
-      default:
-        return AppColors.medium;
+      case 'easy': return AppColors.easy;
+      case 'hard': return AppColors.hard;
+      default: return AppColors.medium;
     }
   }
 
   String _difficultyLabel(String d) {
     switch (d) {
-      case 'easy':
-        return 'Mudah';
-      case 'hard':
-        return 'Sulit';
-      default:
-        return 'Sedang';
+      case 'easy': return 'Mudah';
+      case 'hard': return 'Sulit';
+      default: return 'Sedang';
     }
   }
 
   void _submitProgress(Task task) {
     final note = _noteController.text.trim();
-
-    // Tambah ke riwayat progress lokal
     final newUpdate = ProgressUpdate(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       taskId: task.id,
@@ -633,15 +626,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
     );
 
     context.read<TaskProvider>().updateTaskProgressWithHistory(
-          task.id,
-          _progress,
-          note,
-          newUpdate,
-        );
+          task.id, _progress, note, newUpdate);
 
     _noteController.clear();
-
-    // Pindah ke tab riwayat setelah simpan
     _tabController.animateTo(1);
 
     ScaffoldMessenger.of(context).showSnackBar(

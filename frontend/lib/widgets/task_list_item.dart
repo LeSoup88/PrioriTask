@@ -18,6 +18,12 @@ class TaskListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final textHint = isDark ? AppColors.darkTextSecondary : AppColors.textHint;
+    final dividerColor = isDark ? const Color(0xFF263550) : AppColors.divider;
     final diffColor = _difficultyColor(task.difficulty);
 
     return Dismissible(
@@ -40,16 +46,16 @@ class TaskListItem extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: task.isCompleted
-                ? AppColors.surface.withOpacity(0.7)
-                : AppColors.surface,
+                ? cardColor.withOpacity(0.7)
+                : cardColor,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
               color: task.isOverdue
                   ? AppColors.urgent.withOpacity(0.3)
-                  : AppColors.divider,
+                  : dividerColor,
             ),
             boxShadow: [
-              if (!task.isCompleted)
+              if (!task.isCompleted && !isDark)
                 BoxShadow(
                   color: AppColors.shadow.withOpacity(0.4),
                   blurRadius: 8,
@@ -60,7 +66,6 @@ class TaskListItem extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Left accent bar
               Container(
                 width: 4,
                 height: 70,
@@ -84,7 +89,7 @@ class TaskListItem extends StatelessWidget {
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: task.isCompleted
-                                  ? AppColors.textHint
+                                  ? textHint
                                   : AppColors.primary,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -105,11 +110,12 @@ class TaskListItem extends StatelessWidget {
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                         color: task.isCompleted
-                            ? AppColors.textSecondary
-                            : AppColors.textPrimary,
+                            ? textSecondary
+                            : textPrimary,
                         decoration: task.isCompleted
                             ? TextDecoration.lineThrough
                             : null,
+                        decorationColor: textSecondary,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -118,7 +124,7 @@ class TaskListItem extends StatelessWidget {
                     Row(
                       children: [
                         Icon(Icons.access_time_rounded,
-                            size: 12, color: AppColors.textHint),
+                            size: 12, color: textHint),
                         const SizedBox(width: 4),
                         Text(
                           DateFormat('d MMM yyyy').format(task.deadline),
@@ -126,7 +132,7 @@ class TaskListItem extends StatelessWidget {
                             fontSize: 11,
                             color: task.isOverdue && !task.isCompleted
                                 ? AppColors.urgent
-                                : AppColors.textHint,
+                                : textHint,
                             fontWeight: task.isOverdue && !task.isCompleted
                                 ? FontWeight.w600
                                 : FontWeight.w400,
@@ -138,7 +144,7 @@ class TaskListItem extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: diffColor.withOpacity(0.1),
+                              color: diffColor.withOpacity(0.12),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
@@ -159,7 +165,7 @@ class TaskListItem extends StatelessWidget {
                         padding: EdgeInsets.zero,
                         lineHeight: 5,
                         percent: task.progressPercent / 100,
-                        backgroundColor: AppColors.divider,
+                        backgroundColor: isDark ? const Color(0xFF2A3F60) : AppColors.divider,
                         progressColor: task.isOverdue
                             ? AppColors.urgent
                             : AppColors.primary,
@@ -191,10 +197,9 @@ class TaskListItem extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 2),
-                    const Text(
+                    Text(
                       'skor',
-                      style: TextStyle(
-                          fontSize: 9, color: AppColors.textHint),
+                      style: TextStyle(fontSize: 9, color: textHint),
                     ),
                   ],
                 ),
@@ -208,23 +213,17 @@ class TaskListItem extends StatelessWidget {
 
   Color _difficultyColor(String d) {
     switch (d) {
-      case 'easy':
-        return AppColors.easy;
-      case 'hard':
-        return AppColors.hard;
-      default:
-        return AppColors.medium;
+      case 'easy': return AppColors.easy;
+      case 'hard': return AppColors.hard;
+      default: return AppColors.medium;
     }
   }
 
   String _difficultyLabel(String d) {
     switch (d) {
-      case 'easy':
-        return 'Mudah';
-      case 'hard':
-        return 'Sulit';
-      default:
-        return 'Sedang';
+      case 'easy': return 'Mudah';
+      case 'hard': return 'Sulit';
+      default: return 'Sedang';
     }
   }
 }

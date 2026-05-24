@@ -30,10 +30,18 @@ class AppColors {
 
   static const Color navBarBg = Color(0xFFFFFFFF);
   static const Color shadow = Color(0x1A5B78C4);
+
+  static const Color darkBackground = Color(0xFF0F1A2E);
+  static const Color darkSurface = Color(0xFF1A2A4A);
+  static const Color darkCard = Color(0xFF1A2A4A);
+  static const Color darkNavBar = Color(0xFF0A1220);
+  static const Color darkTextPrimary = Color(0xFFCBD5E8);
+  static const Color darkTextSecondary = Color(0xFF7A95B8);
+  static const Color darkDivider = Color(0xFF1E2F4A);
 }
 
 class AppTheme {
-  static ThemeData get theme => ThemeData(
+  static ThemeData get lightTheme => ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.primary,
@@ -124,4 +132,97 @@ class AppTheme {
           ),
         ),
       );
+
+  static ThemeData get darkTheme => ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: AppColors.primary,
+      brightness: Brightness.dark,
+    ),
+    scaffoldBackgroundColor: AppColors.darkBackground,
+    fontFamily: 'Poppins',
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.darkNavBar,
+      foregroundColor: AppColors.darkTextPrimary,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      centerTitle: false,
+      titleTextStyle: TextStyle(
+        fontFamily: 'Poppins',
+        fontSize: 22,
+        fontWeight: FontWeight.w700,
+        color: AppColors.darkTextPrimary,
+      ),
+    ),
+    cardTheme: CardThemeData(
+      color: AppColors.darkCard,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        textStyle: const TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    ),
+
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: AppColors.darkSurface,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AppColors.darkDivider),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AppColors.darkDivider),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+      ),
+      hintStyle: const TextStyle(
+        color: AppColors.darkTextSecondary,
+        fontFamily: 'Poppins',
+        fontSize: 14,
+      ),
+      labelStyle: const TextStyle(
+        color: AppColors.darkTextSecondary,
+        fontFamily: 'Poppins',
+        fontSize: 14,
+      ),
+    ),
+
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: AppColors.darkNavBar,
+      selectedItemColor: AppColors.gold,
+      unselectedItemColor: Color(0xFF4A6080),
+      showUnselectedLabels: true,
+      type: BottomNavigationBarType.fixed,
+      elevation: 0,
+      selectedLabelStyle: TextStyle(
+        fontFamily: 'Poppins',
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+      ),
+      unselectedLabelStyle: TextStyle(
+        fontFamily: 'Poppins',
+        fontSize: 11,
+        fontWeight: FontWeight.w400,
+      ),
+    ),
+  );
 }
