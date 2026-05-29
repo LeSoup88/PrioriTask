@@ -6,6 +6,7 @@ import 'notification_settings_screen.dart';
 import 'security_screen.dart';
 import 'help_screen.dart';
 import 'about_screen.dart';
+import '../services/auth_service.dart';
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
@@ -166,7 +167,9 @@ class AccountScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () async {
+                    await AuthService.logout();
+                  },
                   icon: const Icon(Icons.logout_rounded),
                   label: const Text(
                     'Keluar',
