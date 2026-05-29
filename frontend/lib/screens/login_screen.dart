@@ -44,29 +44,10 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 48),
 
               // Logo & branding
-              Container(
+              Image.asset(
+                'assets/images/logo.png',
                 width: 80,
                 height: 80,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppColors.primary, AppColors.primaryDark],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(22),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withOpacity(0.3),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.task_alt_rounded,
-                  color: Colors.white,
-                  size: 40,
-                ),
               ),
               const SizedBox(height: 16),
               Text(
