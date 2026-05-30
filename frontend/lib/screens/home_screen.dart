@@ -3,13 +3,38 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../theme/app_theme.dart';
 import '../services/task_provider.dart';
+import '../services/profile_service.dart';
 import '../models/task.dart';
 import '../widgets/priority_task_card.dart';
 import '../widgets/notification_card.dart';
 import 'task_detail_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String? _displayName;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadName();
+  }
+
+  Future<void> _loadName() async {
+    final profile = await ProfileService.getProfile();
+    if (mounted) {
+      setState(() {
+        _displayName = profile?.fullName?.isNotEmpty == true
+            ? profile!.fullName
+            : ProfileService.currentUserEmail?.split('@').first ?? 'User';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +90,8 @@ class HomeScreen extends StatelessWidget {
                           padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
                           child: NotificationCard(
                             task: notifications[index],
-                            onTap: () => _openDetail(context, notifications[index]),
+                            onTap: () =>
+                                _openDetail(context, notifications[index]),
                           ),
                         ),
                         childCount: notifications.length,
@@ -83,8 +109,10 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
-    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final textPrimary =
+        isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textSecondary =
+        isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
     final now = DateTime.now();
     final greeting = _getGreeting();
     final dateStr = DateFormat('EEE, d MMM').format(now);
@@ -107,7 +135,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                'Lil Gui',
+                _displayName ?? '...',
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
@@ -117,7 +145,8 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
               color: AppColors.gold.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
@@ -166,8 +195,10 @@ class HomeScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
     final dividerColor = isDark ? AppColors.darkDivider : AppColors.divider;
-    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
-    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final textPrimary =
+        isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textSecondary =
+        isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
 
     return Container(
       padding: const EdgeInsets.all(32),
@@ -204,8 +235,10 @@ class HomeScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
     final dividerColor = isDark ? AppColors.darkDivider : AppColors.divider;
-    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
-    final textHint = isDark ? AppColors.darkTextSecondary : AppColors.textHint;
+    final textSecondary =
+        isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final textHint =
+        isDark ? AppColors.darkTextSecondary : AppColors.textHint;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -216,7 +249,8 @@ class HomeScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.notifications_none_rounded, color: textHint, size: 24),
+          Icon(Icons.notifications_none_rounded,
+              color: textHint, size: 24),
           const SizedBox(width: 12),
           Text(
             'Tidak ada notifikasi deadline mendekat',
