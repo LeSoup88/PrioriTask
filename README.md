@@ -1,85 +1,147 @@
-# Backend PrioriTask — Dokumentasi Lengkap
 <p align="center">
-     <img width="400" alt="Logo PrioriTask (1)" src="https://github.com/user-attachments/assets/d59ea0dc-75c6-4a8d-b5cf-4ecd07640084" />
+     <img width="400" alt="Logo PrioriTask" src="https://github.com/user-attachments/assets/d59ea0dc-75c6-4a8d-b5cf-4ecd07640084" />
 </p>
-## Gambaran Umum
 
-Backend PrioriTask dibangun menggunakan **NestJS** (framework Node.js berbasis TypeScript) dan **Supabase** (PostgreSQL as a Service) sebagai database. Backend bertugas sebagai jembatan antara aplikasi Flutter dan database, sekaligus menjalankan logika bisnis utama seperti kalkulasi skor prioritas tugas dan pengelolaan notifikasi deadline.
+<h1 align="center">PrioriTask</h1>
+<p align="center"><b>Smart Task Management Mobile Application for University Students</b></p>
+
+---
+
+## Tentang PrioriTask
+
+Mahasiswa masa kini sering menjalani lima mata kuliah atau lebih dalam satu semester, masing-masing dengan tugas, proyek, dan deadline sendiri-sendiri. Masalahnya bukan soal rajin atau tidak, melainkan **menentukan mana yang harus dikerjakan lebih dulu**. Aplikasi pencatat tugas yang umum dipakai (Notion, Google Tasks, dsb.) memperlakukan semua tugas secara setara, sehingga mahasiswa tetap harus memilah sendiri mana yang paling mendesak — proses yang menguras waktu dan energi.
+
+**PrioriTask** hadir untuk menjawab persoalan ini. PrioriTask adalah aplikasi mobile yang membantu mahasiswa mencatat tugas akademik sekaligus **menghitung skor prioritas setiap tugas secara otomatis**, berdasarkan tiga variabel: kedekatan deadline, tingkat kesulitan, dan progres pengerjaan saat ini. Hasilnya, mahasiswa mendapat panduan objektif tentang apa yang harus dikerjakan berikutnya, tanpa perlu menebak-nebak sendiri.
+
+Proyek ini dikembangkan sebagai tugas mata kuliah **Software Architecture** oleh Kelompok 8.
+
+---
+
+## Fitur Utama
+
+- **Task Management** — Tambah, lihat, dan kelola seluruh tugas akademik dalam satu tempat, dikategorikan berdasarkan mata kuliah, tingkat kesulitan, dan status.
+- **Automated Prioritization** — Skor prioritas tiap tugas dihitung otomatis berdasarkan deadline, tingkat kesulitan, dan progres pengerjaan, lalu diperbarui secara dinamis.
+- **Progress Tracking** — Perbarui progres pengerjaan tugas secara visual lewat slider 0–100%, lengkap dengan riwayat catatan progres.
+- **Notification System** — Pengingat otomatis untuk tugas yang mendekati deadline, supaya tidak ada yang terlewat.
+- **Calendar View** — Tampilan kalender bulanan untuk melihat sebaran deadline secara sekilas.
+- **Account Dashboard** — Ringkasan standing akademik (GPA & SKS) serta pengaturan tampilan dan notifikasi.
+
+---
+
+## Tampilan Aplikasi
+
+<p align="center">
+  <img src="docs/screenshots/screenshot-home.jpg" width="200" alt="Home — Tugas Prioritas Utama" />
+  <img src="docs/screenshots/screenshot-tasklist.jpg" width="200" alt="Daftar Tugas" />
+  <img src="docs/screenshots/screenshot-taskdetail.jpg" width="200" alt="Detail Tugas & Progress" />
+  <img src="docs/screenshots/screenshot-calendar.jpg" width="200" alt="Kalender" />
+</p>
+
+<p align="center">
+  <i>Home — tugas prioritas utama &nbsp;•&nbsp; Daftar Tugas &nbsp;•&nbsp; Detail Tugas & Progress &nbsp;•&nbsp; Kalender</i>
+</p>
 
 ---
 
 ## Tech Stack
 
-| Komponen | Teknologi | Keterangan |
-|---|---|---|
-| Framework | NestJS 10 | Framework Node.js berbasis TypeScript dengan arsitektur modular |
-| Bahasa | TypeScript | Superset JavaScript dengan static typing |
-| Database | Supabase (PostgreSQL) | Cloud database dengan REST API dan realtime support |
-| ORM/Query | Supabase JS Client | Client resmi Supabase untuk query database |
-| Validasi | class-validator | Dekorator validasi untuk DTO |
-| UUID | uuid v9 | Generate ID unik untuk setiap entitas |
-| Runtime | Node.js 20 | JavaScript runtime environment |
+| Komponen | Teknologi |
+|---|---|
+| Frontend | Flutter (Dart) |
+| Backend | NestJS 10 (TypeScript) |
+| Database | Supabase (PostgreSQL) |
+| State Management | Provider Pattern |
+| CI/CD | GitHub Actions |
 
 ---
 
 ## Struktur Folder
 
 ```
-backend/
-├── src/
-│   ├── main.ts                          # Entry point, konfigurasi app global
-│   ├── app.module.ts                    # Root module, menghubungkan semua modul
-│   ├── supabase/
-│   │   ├── supabase.module.ts           # Global module untuk Supabase
-│   │   └── supabase.service.ts          # Service koneksi ke Supabase
-│   ├── tasks/
-│   │   ├── tasks.module.ts              # Modul tugas
-│   │   ├── tasks.controller.ts          # HTTP endpoint handler
-│   │   ├── tasks.service.ts             # Logika bisnis tugas
-│   │   └── task.dto.ts                  # Data Transfer Object & validasi
-│   ├── priorities/
-│   │   └── priority.service.ts          # Engine kalkulasi skor prioritas
-│   └── notifications/
-│       ├── notifications.module.ts      # Modul notifikasi
-│       ├── notifications.controller.ts  # HTTP endpoint notifikasi
-│       └── notifications.service.ts     # Logika bisnis notifikasi
-├── supabase_schema.sql                  # Script SQL setup database
-├── .env                                 # Environment variables
-├── package.json
-└── tsconfig.json
+PrioriTask/
+├── .github/
+│   └── workflows/
+│       ├── backend.yml          # CI/CD pipeline backend
+│       └── frontend.yml         # CI/CD pipeline frontend
+├── backend/                     # NestJS + TypeScript API
+│   └── src/
+│       ├── notifications/       # Modul notifikasi deadline
+│       ├── priorities/          # Engine kalkulasi skor prioritas
+│       ├── supabase/            # Koneksi & service Supabase (global module)
+│       └── tasks/                # Modul tugas (CRUD, DTO)
+└── frontend/                    # Flutter mobile app
+    ├── assets/
+    │   └── images/               # Logo, gambar onboarding, dsb.
+    └── lib/
+        ├── models/               # Model data (Task, Profile)
+        ├── screens/              # Seluruh halaman UI
+        ├── services/             # API service, auth, state provider
+        ├── theme/                # Konfigurasi tema aplikasi
+        └── widgets/              # Komponen UI reusable
 ```
 
 ---
 
-## Arsitektur
+## Menjalankan Project
 
-Backend PrioriTask mengikuti pola arsitektur **Modular MVC** yang merupakan standar NestJS:
+### Backend
 
-```
-HTTP Request
-     │
-     ▼
-Controller          ← Menerima request, validasi input, kirim response
-     │
-     ▼
-Service             ← Logika bisnis, kalkulasi, orchestration
-     │
-     ▼
-Supabase Service    ← Query ke database PostgreSQL
-     │
-     ▼
-Supabase (Cloud DB) ← Penyimpanan data permanen
+```bash
+cd backend
+npm install --legacy-peer-deps
+npm run start:dev
 ```
 
-Setiap fitur dikelompokkan dalam **module** tersendiri yang bersifat independen dan reusable. Module `SupabaseModule` bersifat **global** sehingga bisa digunakan di semua module lain tanpa perlu di-import ulang.
+Backend berjalan di `http://localhost:3000` dengan hot reload aktif. Detail environment variable ada di bagian [Environment Variables](#environment-variables) di bawah.
+
+### Frontend
+
+```bash
+cd frontend
+flutter pub get
+flutter run
+```
+
+Pastikan Flutter SDK sudah terpasang ([panduan instalasi](https://docs.flutter.dev/get-started/install)) dan ada device/emulator yang aktif sebelum menjalankan `flutter run`.
 
 ---
 
-## Database Schema
+## Detail Teknis Backend
+
+<details>
+<summary><b>Architecture</b> — klik untuk lihat detail</summary>
+
+<br>
+
+PrioriTask mengikuti pola arsitektur **Layered Architecture**, standar opinionated dari NestJS yang mendorong pemisahan tanggung jawab yang bersih antarlapis.
+
+<p align="center">
+  <img src="docs/screenshots/architecture-diagram.png" width="500" alt="Diagram Layered Architecture PrioriTask" />
+</p>
+
+- **Presentation Layer (Controllers)** — `@Controller`, menangani semua HTTP request masuk, memvalidasi input awal, dan mengirim response keluar. Tidak mengandung logika bisnis.
+- **Business Layer (Services)** — Inti dari sistem. `TasksService`, `PriorityService`, `NotificationsService` berada di lapisan ini. Di sinilah formula prioritas dihitung dan aturan bisnis diterapkan.
+- **Persistence Layer (Supabase JS Client)** — Query builder yang memetakan data ke dan dari PostgreSQL. Satu-satunya titik kontak dengan database.
+- **Infrastructure Layer (SupabaseModule — Global Singleton)** — Modul global yang menyediakan koneksi ke Supabase dan di-share ke seluruh aplikasi.
+
+**Alur request:**
+
+```
+HTTP Request → Middlewares → Guards → Pipes → Interceptors → Controller → Service → Supabase Client → PostgreSQL
+```
+
+Exception filters menangkap dan memformat error yang muncul di titik manapun sepanjang alur ini, memastikan response error yang konsisten ke semua client.
+
+</details>
+
+<details>
+<summary><b>Database Schema</b> — klik untuk lihat detail</summary>
+
+<br>
 
 Database menggunakan **PostgreSQL** yang di-host di Supabase dengan dua tabel utama:
 
-### Tabel `tasks`
+**Tabel `tasks`**
 
 | Kolom | Tipe | Keterangan |
 |---|---|---|
@@ -94,7 +156,7 @@ Database menggunakan **PostgreSQL** yang di-host di Supabase dengan dua tabel ut
 | `created_at` | TIMESTAMPTZ | Waktu tugas dibuat |
 | `updated_at` | TIMESTAMPTZ | Waktu terakhir diupdate (auto-update via trigger) |
 
-### Tabel `progress_updates`
+**Tabel `progress_updates`**
 
 | Kolom | Tipe | Keterangan |
 |---|---|---|
@@ -105,7 +167,7 @@ Database menggunakan **PostgreSQL** yang di-host di Supabase dengan dua tabel ut
 | `image_url` | TEXT | URL gambar bukti progress (opsional) |
 | `created_at` | TIMESTAMPTZ | Waktu update dibuat |
 
-### Relasi
+**Relasi**
 
 ```
 tasks (1) ──────── (many) progress_updates
@@ -114,13 +176,16 @@ tasks (1) ──────── (many) progress_updates
 
 Saat sebuah task dihapus, semua progress update yang terkait akan otomatis ikut terhapus.
 
-### Database Trigger
+**Database Trigger**
 
 Tabel `tasks` memiliki trigger `tasks_updated_at` yang otomatis memperbarui kolom `updated_at` setiap kali ada perubahan data, tanpa perlu dilakukan secara manual dari aplikasi.
 
----
+</details>
 
-## API Endpoints
+<details>
+<summary><b>API Endpoints</b> — klik untuk lihat detail</summary>
+
+<br>
 
 Base URL: `http://localhost:3000` (development) atau URL deployment kamu (production)
 
@@ -285,9 +350,12 @@ Mengambil maksimal 3 tugas yang paling mendesak untuk dijadikan notifikasi, yait
 ]
 ```
 
----
+</details>
 
-## Formula Kalkulasi Prioritas
+<details>
+<summary><b>Formula Kalkulasi Prioritas</b> — klik untuk lihat detail</summary>
+
+<br>
 
 Ini adalah inti logika bisnis PrioriTask. Setiap tugas memiliki **skor prioritas** yang dihitung secara dinamis berdasarkan tiga faktor, diimplementasikan di `src/priorities/priority.service.ts`.
 
@@ -353,9 +421,12 @@ Score = (0.5 × 71.43) + (0.3 × 100) + (0.2 × 70)
 
 Skor ini kemudian dibandingkan antar semua tugas aktif untuk menentukan urutan prioritas di aplikasi.
 
----
+</details>
 
-## Environment Variables
+<details>
+<summary><b>Environment Variables</b> — klik untuk lihat detail</summary>
+
+<br>
 
 File `.env` di root folder `backend/` perlu diisi sebelum menjalankan backend:
 
@@ -376,63 +447,21 @@ Cara mendapatkan nilai-nilai di atas:
 5. Copy **anon public** → `SUPABASE_ANON_KEY`
 6. Copy **service_role** → `SUPABASE_SERVICE_ROLE_KEY`
 
----
+</details>
 
-## Menjalankan Backend
+<details>
+<summary><b>CI/CD (GitHub Actions)</b> — klik untuk lihat detail</summary>
 
-### Development
-```bash
-cd backend
-npm install --legacy-peer-deps
-npm run start:dev
-```
-
-Server akan berjalan di `http://localhost:3000` dengan **hot reload** aktif — setiap perubahan file akan otomatis me-restart server.
-
-### Production Build
-```bash
-npm run build
-npm run start:prod
-```
-
----
-
-## CI/CD (GitHub Actions)
+<br>
 
 File `.github/workflows/backend.yml` menjalankan pipeline otomatis setiap kali ada push ke branch `main` atau `develop` pada folder `backend/`.
 
-### Tahapan Pipeline
+**Tahapan Pipeline**
 
-**1. Job `test` (berjalan di semua push dan pull request)**
-- Checkout kode
-- Setup Node.js 20
-- Install dependencies
-- Jalankan linter (`eslint`)
-- Jalankan unit test (`jest`)
-- Build TypeScript ke JavaScript
+1. **Job `test`** (berjalan di semua push dan pull request) — checkout kode, setup Node.js 20, install dependencies, jalankan linter (`eslint`), jalankan unit test (`jest`), build TypeScript ke JavaScript.
+2. **Job `deploy`** (hanya berjalan saat push ke `main`) — hanya berjalan jika job `test` berhasil. Siap dikonfigurasi untuk deploy ke **Railway** atau **Render**.
 
-**2. Job `deploy` (hanya berjalan saat push ke `main`)**
-- Hanya berjalan jika job `test` berhasil
-- Siap dikonfigurasi untuk deploy ke **Railway** atau **Render**
-
-### Cara Mengaktifkan Auto-Deploy
-
-**Opsi A — Railway:**
-1. Buat akun di [railway.app](https://railway.app)
-2. Import repository GitHub
-3. Set environment variables di Railway dashboard
-4. Tambahkan `RAILWAY_TOKEN` ke GitHub Secrets
-5. Uncomment bagian Railway di `backend.yml`
-
-**Opsi B — Render:**
-1. Buat akun di [render.com](https://render.com)
-2. Create Web Service, hubungkan ke repository
-3. Set Build Command: `npm run build`
-4. Set Start Command: `node dist/main`
-5. Copy Deploy Hook URL, tambahkan ke GitHub Secrets sebagai `RENDER_DEPLOY_HOOK_URL`
-6. Uncomment bagian Render di `backend.yml`
-
-### GitHub Secrets yang Dibutuhkan
+**GitHub Secrets yang Dibutuhkan**
 
 Tambahkan di **repository → Settings → Secrets and variables → Actions:**
 
@@ -443,9 +472,12 @@ Tambahkan di **repository → Settings → Secrets and variables → Actions:**
 | `RAILWAY_TOKEN` | Token Railway (jika pakai Railway) |
 | `RENDER_DEPLOY_HOOK_URL` | Deploy hook Render (jika pakai Render) |
 
----
+</details>
 
-## Offline Fallback
+<details>
+<summary><b>Offline Fallback</b> — klik untuk lihat detail</summary>
+
+<br>
 
 Backend dirancang agar **tidak crash** saat Supabase tidak tersambung. Jika kredensial Supabase tidak ditemukan atau koneksi gagal, sistem akan:
 
@@ -454,3 +486,19 @@ Backend dirancang agar **tidak crash** saat Supabase tidak tersambung. Jika kred
 3. Tetap menjalankan semua kalkulasi prioritas secara normal
 
 Ini memungkinkan pengembangan dan testing frontend berjalan tanpa memerlukan koneksi database aktif.
+
+</details>
+
+---
+
+## Tim Pengembang — Kelompok 8
+
+| Nama | Peran |
+|---|---|
+| Stawin Revano | Project Manager + Backend |
+| Gilbert Nicholin | Backend + Frontend |
+| Nabil Rafif Utomo | Frontend |
+| Roderikus Orvin Nevanto | Frontend |
+| Sindy Aulia Putri Hendrawan | Frontend |
+
+---
