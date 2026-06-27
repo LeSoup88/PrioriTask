@@ -25,6 +25,10 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final navBgColor = isDark ? AppColors.darkNavBar : AppColors.navBarBg;
+    final dividerColor = isDark ? AppColors.darkDivider : AppColors.divider;
+
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
@@ -33,17 +37,17 @@ class _MainShellState extends State<MainShell> {
       floatingActionButton: _currentIndex == 0 || _currentIndex == 1
           ? FloatingActionButton(
               onPressed: () => _openAddTask(context),
-              backgroundColor: AppColors.primary,
+              backgroundColor: AppColors.gold,
               elevation: 4,
               shape: const CircleBorder(),
               child: const Icon(Icons.add, color: Colors.white, size: 28),
             )
           : null,
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: AppColors.navBarBg,
+        decoration: BoxDecoration(
+          color: navBgColor,
           border: Border(
-            top: BorderSide(color: AppColors.divider, width: 1),
+            top: BorderSide(color: dividerColor, width: 1),
           ),
         ),
         child: SafeArea(

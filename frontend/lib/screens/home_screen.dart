@@ -3,13 +3,38 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../theme/app_theme.dart';
 import '../services/task_provider.dart';
+import '../services/profile_service.dart';
 import '../models/task.dart';
 import '../widgets/priority_task_card.dart';
 import '../widgets/notification_card.dart';
 import 'task_detail_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String? _displayName;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadName();
+  }
+
+  Future<void> _loadName() async {
+    final profile = await ProfileService.getProfile();
+    if (mounted) {
+      setState(() {
+        _displayName = profile?.fullName?.isNotEmpty == true
+            ? profile!.fullName
+            : ProfileService.currentUserEmail?.split('@').first ?? 'User';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,33 +54,33 @@ class HomeScreen extends StatelessWidget {
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
-                      child: _buildSectionTitle('Tugas Prioritas Utama'),
+                      child: _buildSectionTitle(context, 'Tugas Prioritas Utama'),
                     ),
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: provider.isLoading
-                          ? _buildLoadingCard()
+                          ? _buildLoadingCard(context)
                           : urgentTask != null
                               ? PriorityTaskCard(
                                   task: urgentTask,
                                   onTap: () => _openDetail(context, urgentTask),
                                 )
-                              : _buildEmptyPriority(),
+                              : _buildEmptyPriority(context),
                     ),
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
-                      child: _buildSectionTitle('Notifikasi Deadline'),
+                      child: _buildSectionTitle(context, 'Notifikasi Deadline'),
                     ),
                   ),
                   if (notifications.isEmpty)
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: _buildEmptyNotifications(),
+                        child: _buildEmptyNotifications(context),
                       ),
                     )
                   else
@@ -83,6 +108,11 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary =
+        isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textSecondary =
+        isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
     final now = DateTime.now();
     final greeting = _getGreeting();
     final dateStr = DateFormat('EEE, d MMM').format(now);
@@ -97,27 +127,28 @@ class HomeScreen extends StatelessWidget {
             children: [
               Text(
                 greeting,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
-                  color: AppColors.textSecondary,
+                  color: textSecondary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(height: 2),
-              const Text(
-                'Lil Gui',
+              Text(
+                _displayName ?? '...',
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
+                  color: textPrimary,
                 ),
               ),
             ],
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.gold.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
@@ -125,7 +156,7 @@ class HomeScreen extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: AppColors.primary,
+                color: AppColors.gold,
               ),
             ),
           ),
@@ -134,22 +165,24 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w700,
-        color: AppColors.textPrimary,
+        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
       ),
     );
   }
 
-  Widget _buildLoadingCard() {
+  Widget _buildLoadingCard(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       height: 200,
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: isDark ? AppColors.darkSurface : AppColors.surface,
         borderRadius: BorderRadius.circular(20),
       ),
       child: const Center(
@@ -158,31 +191,39 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyPriority() {
+  Widget _buildEmptyPriority(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final dividerColor = isDark ? AppColors.darkDivider : AppColors.divider;
+    final textPrimary =
+        isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textSecondary =
+        isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: cardColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: dividerColor),
       ),
       child: Column(
         children: [
           Icon(Icons.check_circle_outline,
               size: 56, color: AppColors.success.withOpacity(0.7)),
           const SizedBox(height: 12),
-          const Text(
+          Text(
             'Tidak ada tugas aktif',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: textPrimary,
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             'Tambahkan tugas baru dengan tombol +',
-            style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+            style: TextStyle(fontSize: 13, color: textSecondary),
             textAlign: TextAlign.center,
           ),
         ],
@@ -190,22 +231,30 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyNotifications() {
+  Widget _buildEmptyNotifications(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final dividerColor = isDark ? AppColors.darkDivider : AppColors.divider;
+    final textSecondary =
+        isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final textHint =
+        isDark ? AppColors.darkTextSecondary : AppColors.textHint;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: dividerColor),
       ),
-      child: const Row(
+      child: Row(
         children: [
           Icon(Icons.notifications_none_rounded,
-              color: AppColors.textHint, size: 24),
-          SizedBox(width: 12),
+              color: textHint, size: 24),
+          const SizedBox(width: 12),
           Text(
             'Tidak ada notifikasi deadline mendekat',
-            style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+            style: TextStyle(fontSize: 13, color: textSecondary),
           ),
         ],
       ),

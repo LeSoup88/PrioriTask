@@ -33,14 +33,28 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       appBar: AppBar(
-        title: const Text('Tambah Tugas'),
+        backgroundColor: isDark ? AppColors.darkNavBar : AppColors.background,
+        foregroundColor: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+        title: Text(
+          'Tambah Tugas',
+          style: TextStyle(
+            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
+          icon: Icon(
+            Icons.arrow_back_rounded,
+            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
+        elevation: 0,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -56,11 +70,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   controller: _subjectController,
                   decoration: const InputDecoration(
                     hintText: 'Contoh: Kalkulus, Basis Data...',
-                    prefixIcon:
-                        Icon(Icons.school_outlined, color: AppColors.primary),
+                    prefixIcon: Icon(Icons.school_outlined, color: AppColors.primary),
                   ),
-                  validator: (v) =>
-                      v == null || v.isEmpty ? 'Wajib diisi' : null,
+                  validator: (v) => v == null || v.isEmpty ? 'Wajib diisi' : null,
                 ),
                 const SizedBox(height: 16),
                 _buildLabel('Nama Tugas'),
@@ -69,11 +81,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   controller: _nameController,
                   decoration: const InputDecoration(
                     hintText: 'Contoh: Tugas Integral Lipat...',
-                    prefixIcon: Icon(Icons.assignment_outlined,
-                        color: AppColors.primary),
+                    prefixIcon: Icon(Icons.assignment_outlined, color: AppColors.primary),
                   ),
-                  validator: (v) =>
-                      v == null || v.isEmpty ? 'Wajib diisi' : null,
+                  validator: (v) => v == null || v.isEmpty ? 'Wajib diisi' : null,
                 ),
                 const SizedBox(height: 16),
                 _buildLabel('Deskripsi Tugas'),
@@ -120,12 +130,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
 
   Widget _buildLabel(String text) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Text(
       text,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
+        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
       ),
     );
   }
@@ -174,6 +185,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
 
   Widget _buildDeadlinePicker(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
+    final dividerColor = isDark ? AppColors.darkDivider : AppColors.divider;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textHint = isDark ? AppColors.darkTextSecondary : AppColors.textHint;
+
     return GestureDetector(
       onTap: () async {
         final picked = await _showDateTimePicker(context);
@@ -182,9 +199,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: cardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.divider),
+          border: Border.all(color: dividerColor),
         ),
         child: Row(
           children: [
@@ -193,15 +210,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             const SizedBox(width: 12),
             Text(
               DateFormat('EEEE, d MMMM yyyy  •  HH:mm').format(_deadline),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: AppColors.textPrimary,
+                color: textPrimary,
                 fontWeight: FontWeight.w500,
               ),
             ),
             const Spacer(),
-            const Icon(Icons.edit_outlined,
-                size: 16, color: AppColors.textHint),
+            Icon(Icons.edit_outlined, size: 16, color: textHint),
           ],
         ),
       ),
@@ -209,16 +225,21 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
 
   Future<DateTime?> _showDateTimePicker(BuildContext context) async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final date = await showDatePicker(
       context: context,
       initialDate: _deadline,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
       builder: (context, child) => Theme(
-        data: ThemeData.light().copyWith(
-          colorScheme:
-              const ColorScheme.light(primary: AppColors.primary),
-        ),
+        data: isDark
+            ? ThemeData.dark().copyWith(
+                colorScheme: const ColorScheme.dark(primary: AppColors.primary),
+              )
+            : ThemeData.light().copyWith(
+                colorScheme: const ColorScheme.light(primary: AppColors.primary),
+              ),
         child: child!,
       ),
     );
@@ -235,7 +256,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
 
   Future<void> _submitTask() async {
     if (!_formKey.currentState!.validate()) return;
-
     setState(() => _isLoading = true);
 
     try {
@@ -250,7 +270,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         isCompleted: false,
       );
 
-      // Langsung tambah ke provider secara lokal, tanpa menunggu API
       context.read<TaskProvider>().addTaskLocally(newTask);
 
       if (mounted) {

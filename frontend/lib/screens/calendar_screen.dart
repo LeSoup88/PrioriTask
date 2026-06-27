@@ -28,6 +28,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final textHint = isDark ? AppColors.darkTextSecondary : AppColors.textHint;
+    final cardColor = isDark ? AppColors.darkSurface : AppColors.surface;
+
     return Scaffold(
       body: SafeArea(
         child: Consumer<TaskProvider>(
@@ -38,43 +44,42 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
             return Column(
               children: [
-                // Header
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Kalender',
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
+                          color: textPrimary,
                         ),
                       ),
                       Text(
                         DateFormat('MMMM yyyy').format(_focusedDay),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textSecondary,
+                          color: textSecondary,
                         ),
                       ),
                     ],
                   ),
                 ),
-                // Calendar
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: cardColor,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
-                      BoxShadow(
-                        color: AppColors.shadow,
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
+                      if (!isDark)
+                        BoxShadow(
+                          color: AppColors.shadow,
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
                     ],
                   ),
                   child: TableCalendar<Task>(
@@ -82,8 +87,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     lastDay: DateTime.utc(2027, 12, 31),
                     focusedDay: _focusedDay,
                     calendarFormat: _calendarFormat,
-                    selectedDayPredicate: (day) =>
-                        isSameDay(_selectedDay, day),
+                    selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
                     eventLoader: (day) => provider.getTasksForDate(day),
                     onDaySelected: (selected, focused) {
                       setState(() {
@@ -102,11 +106,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       weekendTextStyle: const TextStyle(
                           color: AppColors.accentOrange,
                           fontWeight: FontWeight.w500),
-                      defaultTextStyle: const TextStyle(
-                          color: AppColors.textPrimary,
+                      defaultTextStyle: TextStyle(
+                          color: textPrimary,
                           fontWeight: FontWeight.w500),
                       todayDecoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.15),
+                        color: AppColors.primary.withOpacity(isDark ? 0.35 : 0.15),
                         shape: BoxShape.circle,
                       ),
                       todayTextStyle: const TextStyle(
@@ -127,33 +131,33 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       ),
                       markerSize: 6,
                     ),
-                    headerStyle: const HeaderStyle(
+                    headerStyle: HeaderStyle(
                       formatButtonVisible: true,
                       titleCentered: true,
                       formatButtonShowsNext: false,
-                      formatButtonDecoration: BoxDecoration(
+                      formatButtonDecoration: const BoxDecoration(
                         color: AppColors.primary,
                         borderRadius: BorderRadius.all(Radius.circular(8)),
                       ),
                       formatButtonTextStyle:
-                          TextStyle(color: Colors.white, fontSize: 12),
+                          const TextStyle(color: Colors.white, fontSize: 12),
                       titleTextStyle: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
+                        color: textPrimary,
                       ),
-                      leftChevronIcon: Icon(Icons.chevron_left,
+                      leftChevronIcon: const Icon(Icons.chevron_left,
                           color: AppColors.primary),
-                      rightChevronIcon: Icon(Icons.chevron_right,
+                      rightChevronIcon: const Icon(Icons.chevron_right,
                           color: AppColors.primary),
                     ),
-                    daysOfWeekStyle: const DaysOfWeekStyle(
+                    daysOfWeekStyle: DaysOfWeekStyle(
                       weekdayStyle: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textSecondary,
+                        color: textSecondary,
                       ),
-                      weekendStyle: TextStyle(
+                      weekendStyle: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: AppColors.accentOrange,
@@ -162,17 +166,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                // Tasks for selected day
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
                     children: [
-                      const Text(
+                      Text(
                         'Tugas pada tanggal ini',
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
+                          color: textPrimary,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -206,14 +209,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               Icon(
                                 Icons.event_available_outlined,
                                 size: 44,
-                                color: AppColors.textHint.withOpacity(0.5),
+                                color: textHint.withOpacity(0.5),
                               ),
                               const SizedBox(height: 8),
-                              const Text(
+                              Text(
                                 'Tidak ada deadline pada tanggal ini',
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: AppColors.textHint,
+                                  color: textHint,
                                 ),
                               ),
                             ],
@@ -230,12 +233,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                 task: task,
                                 onTap: () => Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (_) =>
-                                        TaskDetailScreen(task: task),
+                                    builder: (_) => TaskDetailScreen(task: task),
                                   ),
                                 ),
-                                onDelete: () =>
-                                    provider.deleteTask(task.id),
+                                onDelete: () => provider.deleteTask(task.id),
                               ),
                             );
                           },
