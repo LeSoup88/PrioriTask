@@ -121,12 +121,4 @@ Pastikan Flutter SDK sudah terpasang ([panduan instalasi](https://docs.flutter.d
 
 ---
 
-## Batasan & Rencana Pengembangan
 
-Versi saat ini adalah **MVP (Minimum Viable Product)** dan memiliki beberapa batasan yang disadari sejak awal:
-
-- Belum ada sistem autentikasi pengguna (data tugas masih bersifat global).
-- Notifikasi masih bersifat *pull-based* (diambil saat aplikasi dibuka), belum berupa push notification.
-- Upload gambar bukti progres belum tersedia di UI meski sudah didukung di skema database.
-
-Rencana pengembangan berikutnya mencakup autentikasi via Supabase Auth (JWT), push notification dengan Firebase Cloud Messaging, fitur kolaborasi tugas kelompok, serta dashboard analitik produktivitas.
